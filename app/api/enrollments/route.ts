@@ -57,16 +57,19 @@ export async function POST(request: NextRequest) {
 
     await enrollment.populate('courseId')
 
+    const enrollmentObj = enrollment.toObject() as any
+    const course = enrollmentObj.courseId as any
+
     return NextResponse.json(
       {
         enrollment: {
-          ...enrollment.toObject(),
-          id: enrollment._id.toString(),
-          userId: enrollment.userId.toString(),
-          courseId: enrollment.courseId._id.toString(),
+          ...enrollmentObj,
+          id: enrollmentObj._id.toString(),
+          userId: enrollmentObj.userId.toString(),
+          courseId: course._id?.toString() || course.toString(),
           course: {
-            ...enrollment.courseId.toObject(),
-            id: enrollment.courseId._id.toString(),
+            ...course,
+            id: course._id?.toString() || course.toString(),
           },
         },
       },
