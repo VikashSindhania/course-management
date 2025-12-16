@@ -98,13 +98,15 @@ export async function GET(request: NextRequest) {
         const lessonsCount = await Lesson.countDocuments({ courseId: course._id })
         const enrollmentsCount = await Enrollment.countDocuments({ courseId: course._id })
 
+        const author = course.authorId as any
+
         return {
           ...course,
           id: course._id.toString(),
-          authorId: course.authorId._id.toString(),
+          authorId: author._id?.toString() || author.toString(),
           author: {
-            id: course.authorId._id.toString(),
-            name: course.authorId.name,
+            id: author._id?.toString() || author.toString(),
+            name: author.name || '',
           },
           _count: {
             lessons: lessonsCount,
@@ -175,13 +177,15 @@ ${courseDescriptions}`
           const lessonsCount = await Lesson.countDocuments({ courseId: course._id })
           const enrollmentsCount = await Enrollment.countDocuments({ courseId: course._id })
 
+          const author = course.authorId as any
+
           return {
             ...course,
             id: course._id.toString(),
-            authorId: course.authorId._id.toString(),
+            authorId: author._id?.toString() || author.toString(),
             author: {
-              id: course.authorId._id.toString(),
-              name: course.authorId.name,
+              id: author._id?.toString() || author.toString(),
+              name: author.name || '',
             },
             _count: {
               lessons: lessonsCount,

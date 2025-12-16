@@ -35,15 +35,19 @@ export async function GET(
       courseId: new mongoose.Types.ObjectId(id),
     })
 
+    // Type assertion for populated authorId
+    const courseWithAuthor = course as any
+    const author = courseWithAuthor.authorId as any
+
     const courseData = {
-      ...course,
-      id: course._id.toString(),
+      ...courseWithAuthor,
+      id: courseWithAuthor._id.toString(),
       author: {
-        id: course.authorId._id.toString(),
-        name: course.authorId.name,
-        email: course.authorId.email,
+        id: author._id?.toString() || author.toString(),
+        name: author.name || '',
+        email: author.email || '',
       },
-      authorId: course.authorId._id.toString(),
+      authorId: author._id?.toString() || author.toString(),
       lessons: lessons.map((lesson: any) => ({
         ...lesson,
         id: lesson._id.toString(),
@@ -110,17 +114,20 @@ export async function PUT(
       return NextResponse.json({ error: 'Course not found' }, { status: 404 })
     }
 
+    const updatedCourseObj = updatedCourse.toObject() as any
+    const updatedAuthor = updatedCourseObj.authorId as any
+
     return NextResponse.json(
       {
         course: {
-          ...updatedCourse.toObject(),
-          id: updatedCourse._id.toString(),
+          ...updatedCourseObj,
+          id: updatedCourseObj._id.toString(),
           author: {
-            id: updatedCourse.authorId._id.toString(),
-            name: updatedCourse.authorId.name,
-            email: updatedCourse.authorId.email,
+            id: updatedAuthor._id?.toString() || updatedAuthor.toString(),
+            name: updatedAuthor.name || '',
+            email: updatedAuthor.email || '',
           },
-          authorId: updatedCourse.authorId._id.toString(),
+          authorId: updatedAuthor._id?.toString() || updatedAuthor.toString(),
         },
       },
       { status: 200 }

@@ -116,18 +116,22 @@ export async function GET(request: NextRequest) {
           courseId: enrollment.courseId._id,
         })
 
+        const enrollmentWithCourse = enrollment as any
+        const course = enrollmentWithCourse.courseId as any
+        const author = course.authorId as any
+
         return {
-          ...enrollment,
-          id: enrollment._id.toString(),
-          userId: enrollment.userId.toString(),
-          courseId: enrollment.courseId._id.toString(),
+          ...enrollmentWithCourse,
+          id: enrollmentWithCourse._id.toString(),
+          userId: enrollmentWithCourse.userId.toString(),
+          courseId: course._id.toString(),
           course: {
-            ...enrollment.courseId,
-            id: enrollment.courseId._id.toString(),
-            authorId: enrollment.courseId.authorId._id.toString(),
+            ...course,
+            id: course._id.toString(),
+            authorId: author._id?.toString() || author.toString(),
             author: {
-              id: enrollment.courseId.authorId._id.toString(),
-              name: enrollment.courseId.authorId.name,
+              id: author._id?.toString() || author.toString(),
+              name: author.name || '',
             },
             _count: {
               lessons: lessonsCount,

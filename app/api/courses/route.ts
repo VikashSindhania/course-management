@@ -37,15 +37,17 @@ export async function GET(request: NextRequest) {
         const lessonsCount = await Lesson.countDocuments({ courseId: course._id })
         const enrollmentsCount = await Enrollment.countDocuments({ courseId: course._id })
         
+        const author = course.authorId as any
+        
         return {
           ...course,
           id: course._id.toString(),
           author: {
-            id: course.authorId._id.toString(),
-            name: course.authorId.name,
-            email: course.authorId.email,
+            id: author._id?.toString() || author.toString(),
+            name: author.name || '',
+            email: author.email || '',
           },
-          authorId: course.authorId._id.toString(),
+          authorId: author._id?.toString() || author.toString(),
           _count: {
             lessons: lessonsCount,
             enrollments: enrollmentsCount,
@@ -91,17 +93,20 @@ export async function POST(request: NextRequest) {
 
     await course.populate('authorId', 'name email')
 
+    const courseObj = course.toObject() as any
+    const author = courseObj.authorId as any
+
     return NextResponse.json(
       {
         course: {
-          ...course.toObject(),
-          id: course._id.toString(),
+          ...courseObj,
+          id: courseObj._id.toString(),
           author: {
-            id: course.authorId._id.toString(),
-            name: course.authorId.name,
-            email: course.authorId.email,
+            id: author._id?.toString() || author.toString(),
+            name: author.name || '',
+            email: author.email || '',
           },
-          authorId: course.authorId._id.toString(),
+          authorId: author._id?.toString() || author.toString(),
         },
       },
       { status: 201 }

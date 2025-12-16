@@ -32,18 +32,22 @@ export async function GET(
       return NextResponse.json({ error: 'Lesson not found' }, { status: 404 })
     }
 
+    const lessonWithCourse = lesson as any
+    const course = lessonWithCourse.courseId as any
+    const author = course.authorId as any
+
     const lessonData = {
-      ...lesson,
-      id: lesson._id.toString(),
-      courseId: lesson.courseId._id.toString(),
+      ...lessonWithCourse,
+      id: lessonWithCourse._id.toString(),
+      courseId: course._id.toString(),
       course: {
-        ...lesson.courseId,
-        id: lesson.courseId._id.toString(),
-        authorId: lesson.courseId.authorId._id.toString(),
+        ...course,
+        id: course._id.toString(),
+        authorId: author._id?.toString() || author.toString(),
         author: {
-          id: lesson.courseId.authorId._id.toString(),
-          name: lesson.courseId.authorId.name,
-          email: lesson.courseId.authorId.email,
+          id: author._id?.toString() || author.toString(),
+          name: author.name || '',
+          email: author.email || '',
         },
       },
     }
