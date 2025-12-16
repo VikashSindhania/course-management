@@ -111,15 +111,18 @@ export async function PUT(
       return NextResponse.json({ error: 'Lesson not found' }, { status: 404 })
     }
 
+    const updatedLessonObj = updatedLesson.toObject() as any
+    const updatedCourse = updatedLessonObj.courseId as any
+
     return NextResponse.json(
       {
         lesson: {
-          ...updatedLesson.toObject(),
-          id: updatedLesson._id.toString(),
-          courseId: updatedLesson.courseId._id.toString(),
+          ...updatedLessonObj,
+          id: updatedLessonObj._id.toString(),
+          courseId: updatedCourse._id?.toString() || updatedCourse.toString(),
           course: {
-            id: updatedLesson.courseId._id.toString(),
-            title: updatedLesson.courseId.title,
+            id: updatedCourse._id?.toString() || updatedCourse.toString(),
+            title: updatedCourse.title || '',
           },
         },
       },

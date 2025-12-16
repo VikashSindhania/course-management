@@ -22,15 +22,19 @@ export async function GET(request: NextRequest) {
       .sort({ order: 1 })
       .lean()
 
-    const lessonsData = lessons.map((lesson: any) => ({
-      ...lesson,
-      id: lesson._id.toString(),
-      courseId: lesson.courseId._id.toString(),
-      course: {
-        id: lesson.courseId._id.toString(),
-        title: lesson.courseId.title,
-      },
-    }))
+    const lessonsData = lessons.map((lesson: any) => {
+      const course = lesson.courseId as any
+
+      return {
+        ...lesson,
+        id: lesson._id.toString(),
+        courseId: course._id?.toString() || course.toString(),
+        course: {
+          id: course._id?.toString() || course.toString(),
+          title: course.title || '',
+        },
+      }
+    })
 
     return NextResponse.json({ lessons: lessonsData }, { status: 200 })
   } catch (error) {
@@ -80,15 +84,18 @@ export async function POST(request: NextRequest) {
 
     await lesson.populate('courseId', 'title')
 
+    const lessonObj = lesson.toObject() as any
+    const courseForLesson = lessonObj.courseId as any
+
     return NextResponse.json(
       {
         lesson: {
-          ...lesson.toObject(),
-          id: lesson._id.toString(),
-          courseId: lesson.courseId._id.toString(),
+          ...lessonObj,
+          id: lessonObj._id.toString(),
+          courseId: courseForLesson._id?.toString() || courseForLesson.toString(),
           course: {
-            id: lesson.courseId._id.toString(),
-            title: lesson.courseId.title,
+            id: courseForLesson._id?.toString() || courseForLesson.toString(),
+            title: courseForLesson.title || '',
           },
         },
       },
