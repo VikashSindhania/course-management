@@ -138,11 +138,14 @@ ${courseDescriptions}`
       // Extract JSON array from response (handle markdown code blocks if present)
       let recommendedIds: string[] = []
       try {
-        const jsonMatch = responseText.match(/\[.*?\]/s)
+        // Remove markdown code blocks if present
+        const cleanedText = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
+        // Try to find JSON array pattern (works across multiple lines)
+        const jsonMatch = cleanedText.match(/\[[\s\S]*?\]/)
         if (jsonMatch) {
           recommendedIds = JSON.parse(jsonMatch[0])
         } else {
-          recommendedIds = JSON.parse(responseText)
+          recommendedIds = JSON.parse(cleanedText)
         }
       } catch (parseError) {
         console.error('Failed to parse Gemini response:', parseError)
