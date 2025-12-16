@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     await enrollment.populate("courseId");
 
     const enrollmentObj = enrollment.toObject() as any;
-    const course = enrollmentObj.courseId as any;
+    const enrolledCourse = enrollmentObj.courseId as any;
 
     return NextResponse.json(
       {
@@ -66,10 +66,10 @@ export async function POST(request: NextRequest) {
           ...enrollmentObj,
           id: enrollmentObj._id.toString(),
           userId: enrollmentObj.userId.toString(),
-          courseId: course._id?.toString() || course.toString(),
+          courseId: enrolledCourse._id?.toString() || enrolledCourse.toString(),
           course: {
-            ...course,
-            id: course._id?.toString() || course.toString(),
+            ...enrolledCourse,
+            id: enrolledCourse._id?.toString() || enrolledCourse.toString(),
           },
         },
       },
